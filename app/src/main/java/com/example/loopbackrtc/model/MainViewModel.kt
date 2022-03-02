@@ -1,18 +1,12 @@
 package com.example.loopbackrtc.model
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.loopbackrtc.client.LoopbackVideoCapturer
 import com.example.loopbackrtc.client.PCObserver
 import com.example.loopbackrtc.client.SDPObserver
 import kotlinx.coroutines.launch
 import org.webrtc.*
 import timber.log.Timber
-import java.io.InputStream
-
-
-const val AUDIO_TRACK_ID = "loopback-audio"
 const val VIDEO_TRACK_ID = "loopback-video"
 
 class MainViewModel : ViewModel() {
@@ -20,8 +14,7 @@ class MainViewModel : ViewModel() {
     private lateinit var factory: PeerConnectionFactory
     private lateinit var callerPeerConnection: PeerConnection
     private lateinit var calleePeerConnection: PeerConnection
-    private val eglBase = EglBase.create()
-    lateinit var capturer: LoopbackVideoCapturer
+    lateinit var track: VideoTrack
 
     private val callerPCObserver = PCObserver(this, isCaller = true)
     private val calleePCObserver = PCObserver(this, isCaller = false)
@@ -53,11 +46,11 @@ class MainViewModel : ViewModel() {
     }
 
 
-    fun createOffer(context: Context) {
+    fun createOffer() {
         viewModelScope.launch {
             callerPeerConnection = factory.createPeerConnection(ArrayList(), callerPCObserver)!!
             calleePeerConnection = factory.createPeerConnection(ArrayList(), calleePCObserver)!!
-            callerPeerConnection.addTrack(createVideoTrack(context))
+            callerPeerConnection.addTrack(track)
             callerPeerConnection.createOffer(callerSDPObserver, MediaConstraints())
         }
     }
@@ -67,16 +60,10 @@ class MainViewModel : ViewModel() {
         calleePeerConnection.dispose()
     }
 
-    private fun createVideoTrack(context: Context): VideoTrack? {
+    fun createVideoSource(): VideoSource = factory.createVideoSource(false)
 
-        val videoSource = factory.createVideoSource(false)
-        val track = factory.createVideoTrack(VIDEO_TRACK_ID, videoSource)
-        val surfaceTextureHelper = SurfaceTextureHelper.create(
-            "captureThread", eglBase.eglBaseContext);
-        capturer.initialize(surfaceTextureHelper, context, videoSource.capturerObserver);
-        track.setEnabled(true)
-        capturer.startCapture(352, 240, 30);
-        return track;
+    fun createVideoTrack(videoSource: VideoSource): VideoTrack {
+        return factory.createVideoTrack(VIDEO_TRACK_ID, videoSource)
     }
 
     fun createAnswer() {

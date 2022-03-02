@@ -6,6 +6,9 @@ package com.example.loopbackrtc.client;
  */
 import android.content.Context;
 import android.os.SystemClock;
+
+import com.example.loopbackrtc.model.CircularBuffer;
+
 import org.webrtc.CapturerObserver;
 import org.webrtc.JavaI420Buffer;
 import org.webrtc.Logging;
@@ -18,7 +21,10 @@ import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
+
+import timber.log.Timber;
 
 public class LoopbackVideoCapturer implements VideoCapturer {
 
@@ -34,13 +40,12 @@ public class LoopbackVideoCapturer implements VideoCapturer {
         private static final int FRAME_DELIMETER_LENGTH = FRAME_DELIMITER.length();
         private final int frameWidth;
         private final int frameHeight;
-        private final BufferChannel videoBuffer;
+        private final CircularBuffer videoBuffer;
 
         public VideoReaderY4M(InputStream stream) throws IOException {
             StringBuilder builder = new StringBuilder();
             for (; ; ) {
                 int c = stream.read();
-                Logging.d(TAG, "Got character: " + (char)c);
                 if (c == -1) {
                     // End of file reached.
                     throw new RuntimeException("Found end of header before end of stream");
@@ -51,7 +56,7 @@ public class LoopbackVideoCapturer implements VideoCapturer {
                 }
                 builder.append((char) c);
             }
-            videoBuffer = new BufferChannel(stream);
+            videoBuffer = new CircularBuffer(stream);
             String header = builder.toString();
             String[] headerTokens = header.split("[ ]");
             int w = 0;
