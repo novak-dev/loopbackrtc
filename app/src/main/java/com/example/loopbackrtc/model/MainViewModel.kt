@@ -1,5 +1,7 @@
 package com.example.loopbackrtc.model
 
+import android.annotation.SuppressLint
+import android.view.SurfaceView
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.loopbackrtc.client.PCObserver
@@ -14,6 +16,9 @@ class MainViewModel : ViewModel() {
     private lateinit var factory: PeerConnectionFactory
     private lateinit var callerPeerConnection: PeerConnection
     private lateinit var calleePeerConnection: PeerConnection
+
+    // TODO: fix this mess
+    lateinit var calleeSurface: SurfaceViewRenderer
     lateinit var track: VideoTrack
 
     private val callerPCObserver = PCObserver(this, isCaller = true)
@@ -45,12 +50,13 @@ class MainViewModel : ViewModel() {
         callerPeerConnection.setRemoteDescription(callerSDPObserver, sdp)
     }
 
-
     fun createOffer() {
         viewModelScope.launch {
             callerPeerConnection = factory.createPeerConnection(ArrayList(), callerPCObserver)!!
             calleePeerConnection = factory.createPeerConnection(ArrayList(), calleePCObserver)!!
-            callerPeerConnection.addTrack(track)
+            val stream = factory.createLocalMediaStream("loopback-stream")
+            stream.addTrack(track)
+            callerPeerConnection.addStream(stream)
             callerPeerConnection.createOffer(callerSDPObserver, MediaConstraints())
         }
     }
@@ -70,6 +76,10 @@ class MainViewModel : ViewModel() {
         viewModelScope.launch {
             calleePeerConnection.createAnswer(calleeSDPObserver, MediaConstraints())
         }
+    }
+
+    fun onRemoteStream(stream: MediaStream) {
+        stream.videoTracks[0]?.addSink(calleeSurface)
     }
 
     fun createPeerConnectionFactory() {

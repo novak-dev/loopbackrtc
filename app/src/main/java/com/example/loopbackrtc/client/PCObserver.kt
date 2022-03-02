@@ -45,7 +45,15 @@ class PCObserver(private val viewModel: MainViewModel, private val isCaller: Boo
         Timber.i("onIceCandidatesRemoved")
     }
     override fun onAddStream(p0: MediaStream?) {
-        Timber.i("onAddStream")
+        when (isCaller) {
+            true -> Timber.i("onAddStream for caller")
+            false -> {
+                Timber.i("onAddStream for callee")
+                if (p0 != null) {
+                    viewModel.onRemoteStream(p0)
+                }
+            }
+        }
     }
     override fun onRemoveStream(p0: MediaStream?) {
         Timber.i("onRemoveStream")

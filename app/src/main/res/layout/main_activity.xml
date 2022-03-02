@@ -16,10 +16,38 @@
         android:layout_marginTop="@dimen/small_margin"
         android:text="@string/create_offer" />
 
-    <org.webrtc.SurfaceViewRenderer
-        android:id="@+id/surfaceView"
+
+    <TextView
+        android:id="@+id/callerText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/small_margin"
+        android:text="@string/caller" />
+
+    <org.webrtc.SurfaceViewRenderer
+        android:id="@+id/callerSurface"
         android:layout_width="352px"
         android:layout_height="240px"
-        android:layout_marginTop="16dp"/>
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/small_margin"
+        tools:ignore="PxUsage" />
+
+    <TextView
+        android:id="@+id/calleeText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/small_margin"
+        android:text="@string/callee" />
+
+    <org.webrtc.SurfaceViewRenderer
+        android:id="@+id/calleeSurface"
+        android:layout_width="352px"
+        android:layout_height="240px"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="16dp"
+        tools:ignore="PxUsage" />
+
+
 </LinearLayout>

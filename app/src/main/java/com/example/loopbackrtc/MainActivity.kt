@@ -29,7 +29,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initializeVideo() {
-        binding.surfaceView.init(eglContext, null);
+        binding.callerSurface.init(eglContext, null);
+        binding.calleeSurface.init(eglContext, null);
         val surfaceTextureHelper = SurfaceTextureHelper.create("captureThread", eglContext);
         val videoSource = viewModel.createVideoSource()
         val videoTrack = viewModel.createVideoTrack(videoSource)
@@ -37,8 +38,9 @@ class MainActivity : AppCompatActivity() {
         capturer.initialize(surfaceTextureHelper, applicationContext, videoSource.capturerObserver);
         capturer.startCapture(352, 240, 30);
         videoTrack.setEnabled(true)
-        videoTrack.addSink(binding.surfaceView)
+        videoTrack.addSink(binding.callerSurface)
         viewModel.track = videoTrack
+        viewModel.calleeSurface = binding.calleeSurface
     }
 
     private fun createOffer() {
@@ -58,8 +60,7 @@ class MainActivity : AppCompatActivity() {
     private fun endSession() {
         Timber.i("End session")
         viewModel.endSession()
-        binding.signalButton.text = getString(R.string.create_offer)
-        binding.signalButton.setOnClickListener { createOffer() }
+        binding.signalButton.isEnabled = false
     }
 
     private fun initializeFactory() {
@@ -68,6 +69,8 @@ class MainActivity : AppCompatActivity() {
             .createInitializationOptions())
         viewModel.createPeerConnectionFactory()
     }
+
+
 
 
 }

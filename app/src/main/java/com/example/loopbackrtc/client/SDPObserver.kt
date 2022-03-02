@@ -20,6 +20,6 @@ class SDPObserver(private val viewModel: MainViewModel, private val isCaller: Bo
             false -> Timber.i("SDP set successfully for callee")
         }
     }
-    override fun onCreateFailure(p0: String?) { Timber.e("SDP creation failed") }
-    override fun onSetFailure(p0: String?) { Timber.e("SDP set failed") }
+    override fun onCreateFailure(p0: String?) { Timber.e("SDP creation failed: $p0") }
+    override fun onSetFailure(p0: String?) { Timber.e("SDP set failed: $p0") }
 }
