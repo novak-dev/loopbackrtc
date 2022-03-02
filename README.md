@@ -8,3 +8,8 @@ There is no signaling mechanism, it is purely peer to peer.
 
 It is basically an Android implementation of this sample:
 https://webrtc.github.io/samples/src/content/peerconnection/pc1/
+
+## Video demo
+
+![Demo](https://github.com/novak-dev/novak-dev/blob/main/demo.gif)
+
