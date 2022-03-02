@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">LoopbackRTC</string>
+    <string name="create_offer">Create Offer</string>
+    <string name="create_answer">Create answer</string>
+    <string name="end_session">End session</string>
+</resources>
