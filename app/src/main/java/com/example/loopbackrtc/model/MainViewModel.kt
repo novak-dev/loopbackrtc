@@ -74,7 +74,10 @@ class MainViewModel : ViewModel() {
 
     fun createPeerConnectionFactory() {
         Timber.i("createPeerConnectionFactory")
-        factory = PeerConnectionFactory.builder().createPeerConnectionFactory()
+        factory = PeerConnectionFactory.builder()
+            .setVideoEncoderFactory(SoftwareVideoEncoderFactory())
+            .setVideoDecoderFactory(SoftwareVideoDecoderFactory())
+            .createPeerConnectionFactory()
     }
 
 }
